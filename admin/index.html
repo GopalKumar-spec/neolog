@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeoLog — Admin Panel</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .admin-dashboard { padding: 40px 0; max-width: 1000px; margin: 0 auto; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
+    .admin-tabs { display: flex; gap: 4px; margin-bottom: 32px; flex-wrap: wrap; }
+    .admin-tab { padding: 10px 20px; border: 1px solid var(--border); background: var(--bg-card); cursor: pointer; border-radius: 8px 8px 0 0; font-weight: 500; color: var(--text-secondary); transition: var(--transition); }
+    .admin-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .admin-panel { display: none; }
+    .admin-panel.active { display: block; }
+    .admin-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+    .admin-card h3 { margin-bottom: 16px; }
+    .admin-form label { display: block; font-weight: 600; margin-bottom: 6px; margin-top: 16px; }
+    .admin-form label:first-child { margin-top: 0; }
+    .admin-form input, .admin-form textarea, .admin-form select {
+      width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--bg-primary); color: var(--text-primary); font-size: 0.95rem; font-family: inherit;
+    }
+    .admin-form textarea { min-height: 120px; resize: vertical; }
+    .admin-form textarea.content-editor { min-height: 400px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85rem; }
+    .admin-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-danger:hover { background: #dc2626; color: #fff; }
+    .btn-success { background: #22c55e; color: #fff; }
+    .btn-success:hover { background: #16a34a; color: #fff; }
+    .toast { position: fixed; bottom: 24px; right: 24px; padding: 16px 24px; border-radius: 8px; font-weight: 600; z-index: 9999; animation: slideUp 0.3s ease; }
+    .toast-success { background: #22c55e; color: #fff; }
+    .toast-error { background: #ef4444; color: #fff; }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .post-list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .post-list-item:last-child { border-bottom: none; }
+    .post-list-item .post-info { flex: 1; }
+    .post-list-item .post-title { font-weight: 600; }
+    .post-list-item .post-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; }
+    .stat-number { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+  </style>
+</head>
+<body>
+<button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+<header class="header"><div class="container"><nav class="nav"><a href="/" class="logo"><span class="logo-icon">⚡</span><span class="logo-text">NeoLog</span></a><div class="nav-links"><a href="/">Home</a><a href="/posts/">Articles</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></div></nav></div></header>
+
+<section class="admin-dashboard">
+  <div class="admin-header">
+    <h1>📊 NeoLog Admin Panel</h1>
+    <span style="font-size:0.85rem;color:var(--text-muted)">Local editor — changes save to browser storage</span>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid" id="statsGrid"></div>
+
+  <!-- Tabs -->
+  <div class="admin-tabs">
+    <button class="admin-tab active" onclick="switchTab('editor')">✏️ Post Editor</button>
+    <button class="admin-tab" onclick="switchTab('manage')">📋 Manage Posts</button>
+    <button class="admin-tab" onclick="switchTab('settings')">⚙️ Settings</button>
+  </div>
+
+  <!-- Editor Panel -->
+  <div id="panel-editor" class="admin-panel active">
+    <div class="admin-card">
+      <h3>📝 <span id="editorTitle">Create New Post</span></h3>
+      <form class="admin-form" id="postForm">
+        <input type="hidden" id="editId" value="">
+
+        <label>Post ID (URL slug — e.g., "my-awesome-post")</label>
+        <input type="text" id="postId" placeholder="my-awesome-post" required>
+
+        <label>Title</label>
+        <input type="text" id="postTitle" placeholder="Your catchy headline" required>
+
+        <label>Excerpt (short description for cards)</label>
+        <textarea id="postExcerpt" placeholder="Brief summary of the post..." required></textarea>
+
+        <label>Category</label>
+        <select id="postCategory">
+          <option value="ai-tech">🤖 AI & Tech</option>
+          <option value="sci-fi">🚀 Sci-Fi</option>
+          <option value="movies">🎬 Movies</option>
+          <option value="stories">✍️ Stories</option>
+        </select>
+
+        <label>Author</label>
+        <input type="text" id="postAuthor" value="gk">
+
+        <label>Reading Time</label>
+        <input type="text" id="postReadingTime" placeholder="5 min read">
+
+        <label>Featured Post?</label>
+        <select id="postFeatured"><option value="true">Yes (shows in Featured section)</option><option value="false">No</option></select>
+
+        <label>Content (HTML — use &lt;h2&gt;, &lt;p&gt;, etc.)</label>
+        <textarea class="content-editor" id="postContent" placeholder="Write your article content in HTML..." required></textarea>
+
+        <div class="admin-actions">
+          <button type="submit" class="btn btn-success" id="savePostBtn">💾 Save Post</button>
+          <button type="button" class="btn btn-secondary" onclick="resetForm()">↺ New Post</button>
+          <button type="button" class="btn btn-danger" id="deletePostBtn" style="display:none" onclick="deleteCurrentPost()">🗑️ Delete Post</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Manage Panel -->
+  <div id="panel-manage" class="admin-panel">
+    <div class="admin-card">
+      <h3>📋 All Posts</h3>
+      <p style="color:var(--text-muted);margin-bottom:16px">Click any post to load it into the editor.</p>
+      <div id="postList"></div>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="panel-settings" class="admin-panel">
+    <div class="admin-card">
+      <h3>⚙️ Site Settings</h3>
+      <div class="admin-form">
+        <label>Site Name</label>
+        <input type="text" id="siteName" value="NeoLog">
+        <label>Site Tagline</label>
+        <input type="text" id="siteTagline" value="Future of Tech, Sci-Fi & Storytelling">
+        <label>Site Description (SEO)</label>
+        <textarea id="siteDescription">Premium insights on AI, sci-fi movies, tech trends, and original stories. Daily updates from the edge of tomorrow.</textarea>
+        <div class="admin-actions">
+          <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+      </div>
+    </div>
+    <div class="admin-card">
+      <h3>📊 Export / Backup</h3>
+      <div class="admin-actions">
+        <button class="btn btn-secondary" onclick="exportPosts()">📥 Export All Posts (JSON)</button>
+        <button class="btn btn-secondary" onclick="importPosts()">📤 Import Posts (JSON)</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)">
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer"><div class="container"><div class="footer-bottom"><p>© 2026 NeoLog — Admin Panel v1.0</p></div></div></footer>
+
+<script src="../js/posts.js"></script>
+<script>
+// ═══════════════════════════════════════
+// ADMIN PANEL — Local Management System
+// ═══════════════════════════════════════
+
+// Load from localStorage or use default POSTS
+function loadPosts() {
+  const saved = localStorage.getItem('neolog_posts');
+  if (saved) return JSON.parse(saved);
+  // Convert defaults to saveable format
+  const defaults = (typeof POSTS !== 'undefined' ? POSTS : []).map(p => ({
+    ...p, content: p.content || ''
+  }));
+  localStorage.setItem('neolog_posts', JSON.stringify(defaults));
+  return defaults;
+}
+
+function savePostsToStorage(posts) {
+  localStorage.setItem('neolog_posts', JSON.stringify(posts));
+}
+
+let posts = loadPosts();
+let currentEditId = null;
+
+// Tab switching
+function switchTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.admin-tab[onclick*="${tab}"]`).classList.add('active');
+  document.getElementById(`panel-${tab}`).classList.add('active');
+  if (tab === 'manage') renderPostList();
+  if (tab === 'editor') updateStats();
+}
+
+// Stats
+function updateStats() {
+  const grid = document.getElementById('statsGrid');
+  const cats = {};
+  posts.forEach(p => { cats[p.category] = (cats[p.category] || 0) + 1; });
+  grid.innerHTML = `
+    <div class="stat-card"><div class="stat-number">${posts.length}</div><div class="stat-label">Total Posts</div></div>
+    <div class="stat-card"><div class="stat-number">${posts.filter(p => p.featured).length}</div><div class="stat-label">Featured</div></div>
+    <div class="stat-card"><div class="stat-number">${Object.keys(cats).length}</div><div class="stat-label">Categories</div></div>
+    <div class="stat-card"><div class="stat-number">${posts.reduce((t, p) => t + (p.content ? p.content.length : 0), 0)}</div><div class="stat-label">Total Chars</div></div>
+  `;
+}
+
+// Render post list in management view
+function renderPostList() {
+  const list = document.getElementById('postList');
+  if (posts.length === 0) {
+    list.innerHTML = '<p style="color:var(--text-muted);padding:20px">No posts yet. Create your first post!</p>';
+    return;
+  }
+  list.innerHTML = posts.map(p => `
+    <div class="post-list-item">
+      <div class="post-info">
+        <div class="post-title">${p.title}</div>
+        <div class="post-meta">${p.categoryLabel || p.category} · ${p.date} · ${p.readingTime}${p.featured ? ' · ⭐ Featured' : ''}</div>
+      </div>
+      <div class="admin-actions" style="margin:0">
+        <button class="btn btn-secondary" style="padding:6px 16px;font-size:0.85rem" onclick="editPost('${p.id}')">✏️ Edit</button>
+        <button class="btn btn-danger" style="padding:6px 12px;font-size:0.85rem" onclick="deletePost('${p.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Edit a post
+function editPost(id) {
+  const post = posts.find(p => p.id === id);
+  if (!post) return showToast('Post not found', 'error');
+  currentEditId = id;
+  document.getElementById('editorTitle').textContent = `✏️ Editing: ${post.title}`;
+  document.getElementById('editId').value = id;
+  document.getElementById('postId').value = post.id;
+  document.getElementById('postTitle').value = post.title;
+  document.getElementById('postExcerpt').value = post.excerpt;
+  document.getElementById('postCategory').value = post.category;
+  document.getElementById('postAuthor').value = post.author;
+  document.getElementById('postReadingTime').value = post.readingTime;
+  document.getElementById('postFeatured').value = post.featured ? 'true' : 'false';
+  document.getElementById('postContent').value = post.content;
+  document.getElementById('deletePostBtn').style.display = 'inline-flex';
+  document.getElementById('savePostBtn').textContent = '💾 Update Post';
+  switchTab('editor');
+}
+
+// Reset form for new post
+function resetForm() {
+  currentEditId = null;
+  document.getElementById('editorTitle').textContent = 'Create New Post';
+  document.getElementById('editId').value = '';
+  document.getElementById('postForm').reset();
+  document.getElementById('postAuthor').value = 'gk';
+  document.getElementById('postFeatured').value = 'false';
+  document.getElementById('deletePostBtn').style.display = 'none';
+  document.getElementById('savePostBtn').textContent = '💾 Save Post';
+}
+
+// Save/Update post
+document.getElementById('postForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const data = {
+    id: document.getElementById('postId').value,
+    title: document.getElementById('postTitle').value,
+    excerpt: document.getElementById('postExcerpt').value,
+    category: document.getElementById('postCategory').value,
+    date: new Date().toISOString().split('T')[0],
+    author: document.getElementById('postAuthor').value || 'gk',
+    readingTime: document.getElementById('postReadingTime').value || '5 min read',
+    featured: document.getElementById('postFeatured').value === 'true',
+    content: document.getElementById('postContent').value
+  };
+  const catLabels = { 'ai-tech': '🤖 AI & Tech', 'sci-fi': '🚀 Sci-Fi', 'movies': '🎬 Movies', 'stories': '✍️ Stories' };
+  data.categoryLabel = catLabels[data.category] || data.category;
+
+  if (currentEditId) {
+    const idx = posts.findIndex(p => p.id === currentEditId);
+    if (idx >= 0) { posts[idx] = data; }
+    showToast('✅ Post updated!', 'success');
+  } else {
+    if (posts.find(p => p.id === data.id)) {
+      return showToast('❌ A post with this ID already exists!', 'error');
+    }
+    posts.push(data);
+    showToast('✅ New post created!', 'success');
+  }
+
+  savePostsToStorage(posts);
+  currentEditId = data.id;
+  document.getElementById('editId').value = data.id;
+  document.getElementById('deletePostBtn').style.display = 'inline-flex';
+  document.getElementById('savePostBtn').textContent = '💾 Update Post';
+  updateStats();
+});
+
+// Delete a post
+function deletePost(id) {
+  if (!confirm(`Delete "${posts.find(p => p.id === id)?.title}"?`)) return;
+  posts = posts.filter(p => p.id !== id);
+  savePostsToStorage(posts);
+  renderPostList();
+  updateStats();
+  if (currentEditId === id) resetForm();
+  showToast('🗑️ Post deleted', 'success');
+}
+
+function deleteCurrentPost() {
+  if (currentEditId) deletePost(currentEditId);
+}
+
+// Settings
+function saveSettings() {
+  localStorage.setItem('neolog_site_name', document.getElementById('siteName').value);
+  localStorage.setItem('neolog_site_tagline', document.getElementById('siteTagline').value);
+  localStorage.setItem('neolog_site_desc', document.getElementById('siteDescription').value);
+  showToast('✅ Settings saved!', 'success');
+}
+
+function loadSettings() {
+  ['siteName','siteTagline','siteDescription'].forEach(id => {
+    const saved = localStorage.getItem(`neolog_${id}`);
+    if (saved) document.getElementById(id).value = saved;
+  });
+}
+
+// Export/Import
+function exportPosts() {
+  const blob = new Blob([JSON.stringify(posts, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `neolog-posts-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  showToast('📥 Exported!', 'success');
+}
+
+function importPosts() {
+  document.getElementById('importFile').click();
+}
+
+function handleImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error('Invalid format');
+      posts = imported;
+      savePostsToStorage(posts);
+      renderPostList();
+      updateStats();
+      showToast(`📥 Imported ${posts.length} posts!`, 'success');
+    } catch(err) {
+      showToast('❌ Invalid JSON file', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Toast notifications
+function showToast(message, type = 'success') {
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// Initialize
+updateStats();
+loadSettings();
+
+// Theme sync
+const themeToggle = document.getElementById('themeToggle');
+const currentTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', currentTheme);
+themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+themeToggle.addEventListener('click', () => {
+  const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+});
+</script>
+</body>
+</html>

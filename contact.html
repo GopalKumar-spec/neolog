@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Contact — NeoLog</title><meta name="description" content="Contact NeoLog — get in touch for collaborations, suggestions, or feedback."><link rel="stylesheet" href="css/style.css"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>"></head>
+<body>
+<button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+<header class="header"><div class="container"><nav class="nav"><a href="/" class="logo"><span class="logo-icon">⚡</span><span class="logo-text">NeoLog</span></a><div class="nav-links"><a href="/">Home</a><a href="/posts/">Articles</a><a href="/about.html">About</a><a href="/contact.html" class="active">Contact</a></div><button class="mobile-menu-btn" aria-label="Menu">☰</button></nav></div></header>
+<section class="page"><div class="container">
+<h1>📬 Contact Us</h1>
+<p>Have a suggestion, collaboration idea, or feedback? We'd love to hear from you. NeoLog is a one-person operation run by <strong>gk</strong> — every message is read and responded to personally.</p>
+<form id="contactForm" style="max-width:500px;margin-top:32px">
+<div style="margin-bottom:16px"><label style="display:block;font-weight:600;margin-bottom:6px">Your Name</label><input type="text" required style="width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);color:var(--text-primary);font-size:1rem"></div>
+<div style="margin-bottom:16px"><label style="display:block;font-weight:600;margin-bottom:6px">Your Email</label><input type="email" required style="width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);color:var(--text-primary);font-size:1rem"></div>
+<div style="margin-bottom:16px"><label style="display:block;font-weight:600;margin-bottom:6px">Message</label><textarea rows="5" required style="width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);color:var(--text-primary);font-size:1rem;font-family:inherit"></textarea></div>
+<button type="submit" class="btn btn-primary">Send Message →</button>
+</form>
+</div></section>
+<script>document.getElementById('contactForm')?.addEventListener('submit',function(e){e.preventDefault();this.innerHTML='<p style="color:var(--accent);font-weight:600;padding:40px 0">✅ Message received! We\'ll get back to you within 24 hours.</p>';const data={name:this.querySelectorAll('input')[0].value,email:this.querySelectorAll('input')[1].value,message:this.querySelector('textarea').value};localStorage.setItem('neolog_contact_'+Date.now(),JSON.stringify(data))});</script>
+<footer class="footer"><div class="container"><div class="footer-bottom"><p>© 2026 NeoLog — Built with ⚡ by gk.</p></div></div></footer>
+<script src="js/posts.js"></script><script src="js/main.js"></script>
+</body>
+</html>
