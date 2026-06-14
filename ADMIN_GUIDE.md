@@ -14,6 +14,7 @@
 |------|-----|----------------|
 | **Home** | `https://gopalkumar-spec.github.io/neolog/` | See all published articles |
 | **Admin Panel** | `https://gopalkumar-spec.github.io/neolog/admin/` | ✏️ **Write, edit, delete posts** — GUI clicks |
+| **→ Expert Tab** | Click **🔒 Expert** in Admin Panel | 🕵️ **Secret commands** — Quick publish, pipeline, cron, emergency |
 | **Stats Dashboard** | `https://gopalkumar-spec.github.io/neolog/dashboard.html` | 📊 View counts, popular articles, income tracking |
 | **All Articles** | `https://gopalkumar-spec.github.io/neolog/posts/` | 📖 Browse by category filter |
 | **RSS Feed** | `https://gopalkumar-spec.github.io/neolog/feed.xml` | 📡 For subscribers to follow you |

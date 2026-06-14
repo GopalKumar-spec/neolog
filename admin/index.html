@@ -45,7 +45,7 @@
 </head>
 <body>
 <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
-<header class="header"><div class="container"><nav class="nav"><a href="/" class="logo"><span class="logo-icon">⚡</span><span class="logo-text">NeoLog</span></a><div class="nav-links"><a href="/">Home</a><a href="/posts/">Articles</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/dashboard.html">📊</a></div></nav></div></header>
+<header class="header"><div class="container"><nav class="nav"><a href="/" class="logo"><span class="logo-icon">⚡</span><span class="logo-text">NeoLog</span></a><div class="nav-links"><a href="/">Home</a><a href="/posts/">Articles</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/dashboard.html">📊 Stats</a></div></nav></div></header>
 
 <section class="admin-dashboard">
   <div class="admin-header">
@@ -61,6 +61,7 @@
     <button class="admin-tab active" onclick="switchTab('editor')">✏️ Post Editor</button>
     <button class="admin-tab" onclick="switchTab('manage')">📋 Manage Posts</button>
     <button class="admin-tab" onclick="switchTab('settings')">⚙️ Settings</button>
+    <button class="admin-tab" onclick="switchTab('expert')">🔒 Expert</button>
   </div>
 
   <!-- Editor Panel -->
@@ -143,6 +144,95 @@
     </div>
   </div>
 </section>
+
+<!-- 🔒 EXPERT PANEL — Hidden Admin Commands -->
+<div id="panel-expert" class="admin-panel">
+  <div class="admin-card" style="border:2px solid #f59e0b">
+    <h3>🔒 Admin Expert Mode</h3>
+    <p style="color:var(--text-muted);margin-bottom:20px">Secret commands to control your website from Terminal. Easy language — just copy & paste.</p>
+
+    <h4 style="margin-top:24px">🚀 Quick Publish — Push Changes Live</h4>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:16px;font-family:monospace;font-size:0.85rem;overflow-x:auto">
+      <div style="margin-bottom:8px"><strong>Step 1:</strong> Open Terminal app on Mac</div>
+      <div style="margin-bottom:4px"><strong>Step 2:</strong> Copy-paste this one line:</div>
+      <code style="display:block;padding:12px;background:#1e293b;color:#e2e8f0;border-radius:6px;margin:8px 0;white-space:pre-wrap">cd /Users/gk/Documents/website && git add -A && git commit -m "site update" && git push</code>
+      <div><span style="color:#22c55e;font-weight:600">✅ Done!</span> Site updates in 30 seconds</div>
+    </div>
+
+    <h4 style="margin-top:24px">🤖 Run Auto Pipeline — AI Writes 2 New Articles</h4>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:16px;font-family:monospace;font-size:0.85rem;overflow-x:auto">
+      <div style="margin-bottom:8px"><strong>What it does:</strong> AI picks trending topics & writes 2 full articles</div>
+      <code style="display:block;padding:12px;background:#1e293b;color:#e2e8f0;border-radius:6px;margin:8px 0;white-space:pre-wrap">cd /Users/gk/Documents/website && python3 pipeline.py</code>
+      <div style="color:#f59e0b">⏳ Takes 1-2 minutes. Don't close Terminal while it runs.</div>
+    </div>
+
+    <h4 style="margin-top:24px">📊 See Live Stats Dashboard</h4>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:16px;font-family:monospace;font-size:0.85rem;overflow-x:auto">
+      <div style="margin-bottom:8px">Open in your browser:</div>
+      <code style="display:block;padding:12px;background:#1e293b;color:#e2e8f0;border-radius:6px;margin:8px 0;white-space:pre-wrap">open https://gopalkumar-spec.github.io/neolog/dashboard.html</code>
+    </div>
+
+    <h4 style="margin-top:24px">🕐 Check Auto Jobs (Cron) Running</h4>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:16px;font-family:monospace;font-size:0.85rem;overflow-x:auto">
+      <div style="margin-bottom:8px"><strong>See all scheduled jobs:</strong></div>
+      <code style="display:block;padding:12px;background:#1e293b;color:#e2e8f0;border-radius:6px;margin:8px 0;white-space:pre-wrap">hermes cron list</code>
+      <div style="margin-top:12px"><strong>Run a job right now (test):</strong></div>
+      <code style="display:block;padding:12px;background:#1e293b;color:#e2e8f0;border-radius:6px;margin:8px 0;white-space:pre-wrap">hermes cron run JOB_ID</code>
+      <div style="margin-top:12px"><strong>Stop a job:</strong></div>
+      <code style="display:block;padding:12px;background:#1e293b;color:#e2e8f0;border-radius:6px;margin:8px 0;white-space:pre-wrap">hermes cron remove JOB_ID</code>
+    </div>
+
+    <h4 style="margin-top:24px">🛡️ Preview Site Locally (Before Publishing)</h4>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:16px;font-family:monospace;font-size:0.85rem;overflow-x:auto">
+      <code style="display:block;padding:12px;background:#1e293b;color:#e2e8f0;border-radius:6px;margin:8px 0;white-space:pre-wrap">cd /Users/gk/Documents/website && python3 -m http.server 4000</code>
+      <div style="margin-top:8px">Then open <code style="background:var(--bg-secondary);padding:2px 6px;border-radius:4px">http://localhost:4000</code> in browser</div>
+    </div>
+
+    <h4 style="margin-top:24px">🔁 Emergency — Undo Changes & Restore</h4>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:16px;font-family:monospace;font-size:0.85rem;overflow-x:auto">
+      <div style="margin-bottom:8px;color:#ef4444"><strong>⚠️ Use only if you broke something!</strong></div>
+      <div style="margin-bottom:8px"><strong>Restore last saved version from GitHub:</strong></div>
+      <code style="display:block;padding:12px;background:#1e293b;color:#e2e8f0;border-radius:6px;margin:8px 0;white-space:pre-wrap">cd /Users/gk/Documents/website && git checkout -- .</code>
+      <div style="margin-top:12px"><strong>Full reset to GitHub version (wipes local changes):</strong></div>
+      <code style="display:block;padding:12px;background:#1e293b;color:#e2e8f0;border-radius:6px;margin:8px 0;white-space:pre-wrap">cd /Users/gk/Documents/website && git fetch origin && git reset --hard origin/main</code>
+    </div>
+
+    <h4 style="margin-top:24px">📁 File Locations — Where Everything Lives</h4>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:16px;overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+        <tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:8px">File/Folder</th><th style="text-align:left;padding:8px">What It Is</th></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px;font-family:monospace">~/Documents/website/</td><td style="padding:8px">📁 Main website folder (open in Finder)</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px;font-family:monospace">js/posts.js</td><td style="padding:8px">📝 All articles — your main content file</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px;font-family:monospace">admin/index.html</td><td style="padding:8px">🛠️ This admin panel (you're here now)</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px;font-family:monospace">css/style.css</td><td style="padding:8px">🎨 Colors, fonts, site design</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px;font-family:monospace">exports/</td><td style="padding:8px">📤 Ready-to-publish files for Medium & WordPress</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px;font-family:monospace">pipeline.py</td><td style="padding:8px">🤖 AI writing robot (runs Mon/Wed/Fri)</td></tr>
+        <tr><td style="padding:8px;font-family:monospace">SECURE_NOTEBOOK.md</td><td style="padding:8px">🔒 Your secret passwords & accounts (never share!)</td></tr>
+      </table>
+    </div>
+
+    <h4 style="margin-top:24px">🔐 Secret URLs (Hidden from Public)</h4>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:16px;overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+        <tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:8px">URL</th><th style="text-align:left;padding:8px">What It Opens</th></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px;font-family:monospace">/neolog/admin/</td><td style="padding:8px">🛠️ This admin panel</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px;font-family:monospace">/neolog/dashboard.html</td><td style="padding:8px">📊 Stats dashboard</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px;font-family:monospace">/neolog/feed.xml</td><td style="padding:8px">📡 RSS feed for subscribers</td></tr>
+        <tr><td style="padding:8px;font-family:monospace">/neolog/exports/</td><td style="padding:8px">📤 Export files (Medium & WordPress ready)</td></tr>
+      </table>
+    </div>
+
+    <div style="margin-top:24px;padding:16px;background:#fef3c7;border-radius:8px;border:1px solid #f59e0b">
+      <p style="font-weight:600;color:#92400e">🚨 SAFETY RULES</p>
+      <ul style="color:#92400e;font-size:0.9rem;padding-left:20px">
+        <li>✅ Use Admin Panel (this page) for article changes — easiest way</li>
+        <li>✅ Run <code style="background:#fde68a;padding:2px 6px;border-radius:4px">git status</code> before publishing to check what changed</li>
+        <li>❌ Never share SECURE_NOTEBOOK.md with anyone</li>
+        <li>❌ Don't push changes without previewing first</li>
+      </ul>
+    </div>
+  </div>
+</div>
 
 <footer class="footer"><div class="container"><div class="footer-bottom"><p>© 2026 NeoLog — Admin Panel v1.0</p></div></div></footer>
 
