@@ -1,0 +1,11 @@
+# 🔐 NEVER COMMIT SECRETS
+SECURE_NOTEBOOK.md
+*.env
+.env*
+.ssh/
+tmp/
+*.log
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
