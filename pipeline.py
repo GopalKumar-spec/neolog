@@ -68,7 +68,10 @@ TRENDING_TOPICS = {
 def load_learnings():
     """Load past performance data to improve content generation"""
     if LEARNINGS_FILE.exists():
-        return json.loads(LEARNINGS_file.read_text())
+        try:
+            return json.loads(LEARNINGS_FILE.read_text())
+        except:
+            pass
     return {"high_performers": [], "low_performers": [], "engagement_tips": []}
 
 def save_learning(topic, category, score, notes=""):
