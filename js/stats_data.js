@@ -1,10 +1,10 @@
 // Auto-generated stats — updated daily by Hermes cron
 const NEO_LOG_STATS = {
-  "generated": "2026-06-14",
-  "total_posts": 6,
+  "generated": "2026-06-22",
+  "total_posts": 13,
   "categories": {},
-  "disk_usage": "144K",
-  "last_commit": "Not a git repo",
+  "disk_usage": "676K",
+  "last_commit": "c927d64 Auto-update: 2026-06-19 - New content",
   "platforms": {
     "github_pages": "Live (setup when you create GitHub account)",
     "medium": "Ready to create",
